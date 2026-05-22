@@ -1,0 +1,64 @@
+{
+  "name": "Génération A7 — Marjane Tanger 08",
+  "short_name": "Génération A7",
+  "description": "Système professionnel de génération d'affichettes A7/A4 pour hypermarché – bilingue FR/AR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d0a06",
+  "theme_color": "#1a120a",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["productivity", "utilities", "business"],
+
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%231a120a'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle' fill='%23f59e0b'%3E%F0%9F%8F%B7%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%231a120a'/%3E%3Ctext x='256' y='350' font-size='270' text-anchor='middle' fill='%23f59e0b'%3E%F0%9F%8F%B7%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Saisie A7",
+      "short_name": "Saisie",
+      "description": "Générer une étiquette A7 rapidement",
+      "url": "./index.html#saisie",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='16' fill='%23f59e0b'/%3E%3Ctext x='48' y='66' font-size='50' text-anchor='middle' fill='%23000'%3EA7%3C/text%3E%3C/svg%3E",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Affichette A4",
+      "short_name": "A4",
+      "description": "Créer une affichette promotionnelle A4",
+      "url": "./index.html#a4",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='16' fill='%231a4da0'/%3E%3Ctext x='48' y='66' font-size='50' text-anchor='middle' fill='%23fff'%3EA4%3C/text%3E%3C/svg%3E",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+
+  "screenshots": [],
+
+  "prefer_related_applications": false,
+
+  "related_applications": []
+}
