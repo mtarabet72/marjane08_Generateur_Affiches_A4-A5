@@ -356,7 +356,8 @@ function a4UploadTemplate(input){
 <!-- Apple splash / icon hints -->
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%231a120a'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle' fill='%23f59e0b'%3E🏷%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
 function a4LoadFromA7(){
   try{
     // essaie de lire les champs A7 s'ils existent
@@ -550,7 +551,8 @@ function a4UploadTemplate(input){
 .pos-field-row .pos-num{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;
   color:var(--text2);text-align:center;width:44px;height:26px}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
 function a4LoadFromA7(){
   try{
     // essaie de lire les champs A7 s'ils existent
@@ -615,7 +617,8 @@ function a4UploadTemplate(input){
 })();
 
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js" crossorigin="anonymous" referrerpolicy="no-referrer">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
 function a4LoadFromA7(){
   try{
     // essaie de lire les champs A7 s'ils existent
@@ -817,6 +820,31 @@ tr:hover td{background:var(--surf3)}
 #logoutBtn{cursor:pointer;background:transparent;border:1px solid var(--border2);border-radius:8px;padding:6px 10px;color:var(--text3);font-size:12px;transition:all .15s}
 #logoutBtn:hover{border-color:var(--red);color:var(--red)}
 </style>
+<script>
+// ═══════════════════════════════════════════════════════════════
+// BOOTSTRAP AUTH — s'exécute EN PREMIER, avant tout le reste
+// Garantit que le compte admin existe toujours dans localStorage
+// ═══════════════════════════════════════════════════════════════
+(function bootstrapAdmin(){
+  try {
+    function fnv(s){ let h=2166136261; for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*16777619)>>>0;} return h.toString(16); }
+    const key = 'a7_users';
+    let users = [];
+    try { users = JSON.parse(localStorage.getItem(key)||'[]'); } catch(e){ users=[]; }
+    // Nettoyer les entrées corrompues
+    users = users.filter(u => u && typeof u.username==='string' && typeof u.pwHash==='string');
+    const ALL = ['saisie','file','base','historique','templates','config'];
+    const adminIdx = users.findIndex(u => u.username.toLowerCase()==='admin');
+    if(adminIdx < 0){
+      users.unshift({username:'admin', pwHash:fnv('admin123'), role:'admin', permissions:ALL});
+    } else {
+      users[adminIdx].role = 'admin';
+      users[adminIdx].permissions = ALL;
+    }
+    localStorage.setItem(key, JSON.stringify(users));
+  } catch(e){ console.error('[Bootstrap] Erreur:', e); }
+})();
+</script>
 </head>
 <body>
 <div id="app">
@@ -1708,34 +1736,24 @@ function doLogin(){
       $('#loginErr').textContent = 'Identifiant et mot de passe requis.';
       return;
     }
+
+    // Toujours s'assurer que l'admin existe avant de chercher
+    initDefaultAdmin();
+
     let users = getUsers();
-    // Nettoyer les données corrompues avant de chercher
     users = users.filter(u => u && typeof u.username === 'string' && typeof u.pwHash === 'string');
     const hash = fnv1a(pass);
-    // BYPASS MOBILE: accept default credentials directly
-    if(username==='admin' && pass==='admin123'){
-      // S'assurer que l'admin existe dans la base
-      initDefaultAdmin();
-      const sessionData = {
-        username:'admin', role:'admin', permissions:ALL_TABS,
-        _exp: Date.now() + 30 * 24 * 60 * 60 * 1000
-      };
-      localStorage.setItem('a7_session', JSON.stringify(sessionData));
-      $('#loginOverlay').style.display='none';
-      $('#app').style.display='';
-      applySession({username:'admin', role:'admin', permissions:ALL_TABS});
-      setTimeout(loadTextColorsUI, 200);
-      return;
-    }
+
     const user = users.find(u => u.username.toLowerCase() === username && u.pwHash === hash);
     if(!user){
       $('#loginErr').textContent = 'Identifiant ou mot de passe incorrect.';
       return;
     }
+
     const sessionData = {
       username: user.username,
       role: user.role,
-      permissions: user.permissions,
+      permissions: user.permissions || ALL_TABS,
       _exp: Date.now() + 30 * 24 * 60 * 60 * 1000
     };
     localStorage.setItem('a7_session', JSON.stringify(sessionData));
@@ -1745,7 +1763,7 @@ function doLogin(){
     setTimeout(loadTextColorsUI, 200);
   } catch(e) {
     console.error('Login error:', e);
-    $('#loginErr').textContent = 'Erreur technique. Rechargez la page.';
+    $('#loginErr').textContent = 'Erreur technique: ' + (e.message||e);
   }
 }
 
